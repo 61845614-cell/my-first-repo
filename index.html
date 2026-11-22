@@ -192,7 +192,9 @@ header.nav.solid{background:rgba(247,246,242,.94);backdrop-filter:blur(10px);box
 .contact-info dl{margin-bottom:26px}
 .contact-info dt{font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;margin-bottom:4px}
 .contact-info dd{font-size:15px;color:var(--ink-2);margin-bottom:18px}
-.map-ph{aspect-ratio:16/9;margin-bottom:8px}
+.map-frame{aspect-ratio:16/9;margin-bottom:8px;border:1px solid rgba(27,26,24,.08);overflow:hidden}
+.map-frame iframe{width:100%;height:100%;border:0;display:block}
+.map-link{display:inline-block;font-size:12px;color:var(--accent);letter-spacing:.04em;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field{margin-bottom:18px}
 .field label{display:block;font-size:12px;color:var(--ink-3);margin-bottom:8px;letter-spacing:.08em}
@@ -320,7 +322,7 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
     <div class="sec-head reveal">
       <div class="eyebrow">Selected Works</div>
       <h2 class="sec-title">作品集 / 案例</h2>
-      <p>精选教育建筑与校园更新实践。点击任意卡片可展开项目大图与说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
+      <p>精选教育建筑、乡村振兴与文旅实践。点击任意卡片可展开项目大图与说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
     </div>
     <div class="grid-cases" id="cases"></div>
     <div class="more-hint reveal">— 更多项目持续更新中 —</div>
@@ -413,10 +415,14 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
         <dt>邮箱 Email</dt><dd>61845614@qq.com</dd>
         <dt>电话 Phone</dt><dd>待填写（电话占位）</dd>
         <dt>微信 WeChat</dt><dd>待填写 · 二维码占位（替换此处为二维码图片）</dd>
-        <dt>工作室 Studio</dt><dd>待填写（工作室地址占位）</dd>
+        <dt>工作室 Studio</dt><dd>陕西省西安市碑林区雁塔中路 111 号 · 建大意诚科创中心 A 座 14 楼</dd>
         <dt>QQ</dt><dd>61845614</dd>
       </dl>
-      <div class="ph map-ph" data-ph="地图占位 · 嵌入地图或截图后替换"></div>
+      <!-- 腾讯地图（合规地图服务）嵌入：GCJ-02 坐标 34.23621,108.96433 -->
+      <div class="map-frame">
+        <iframe src="https://apis.map.qq.com/uri/v1/marker?marker=coord:34.23621,108.96433;title:建大意诚科创中心A座;addr:陕西省西安市碑林区雁塔中路111号&referer=qing-architect-site" title="工作室位置地图" loading="lazy"></iframe>
+      </div>
+      <a class="map-link" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:34.23621,108.96433;title:建大意诚科创中心A座;addr:陕西省西安市碑林区雁塔中路111号&referer=qing-architect-site" target="_blank" rel="noopener">在腾讯地图中打开 ↗</a>
     </div>
     <!-- 表单为纯前端演示：提交后仅弹出提示，不会真的发送数据 -->
     <form class="reveal" id="consultForm">
@@ -501,6 +507,28 @@ const PROJECTS = [
   {title:"西北农林科技大学 2# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2015", scale:"1500㎡", img:"images/project-20.jpg", desc:"通过对旧建筑局部「掏空」「后退」形成新空间与旧建筑的对话，使旧建筑的空间和结构被激活并赋予新的意义。规模 1500㎡。"},
   {title:"西建大附中、附小教学楼改造设计", type:"校园更新", location:"西安", year:"2014", scale:"15000㎡", img:"images/project-21.jpg", desc:"在有限的空间内创造尽可能多的学生活动空间，屋顶种植园增加孩子们对自然的体验，整合中小学入口空间使进出校园更具仪式感。规模 15000㎡。"},
   {title:"宝鸡文理学院体育场改造提升项目", type:"体育建筑", location:"宝鸡", year:"2014", scale:"30000㎡", img:"images/project-22.jpg", desc:"体育场改造提升设计，完善校园运动空间与配套设施。规模 30000㎡。"},
+  {title:"兰州 · 黄河楼", type:"文化建筑", location:"甘肃 · 兰州", year:"2018", scale:"68180㎡", img:"images/project-23.jpg", desc:"兰州新的城市地标，再现兰州城市与黄河的历史空间关系。获飞天奖、陕西省省优一等奖。建筑规模 68180㎡。"},
+  {title:"陕西太白县海棠度假酒店", type:"酒店民宿", location:"陕西 · 太白", year:"2018", scale:"53130㎡", img:"images/project-24.jpg", desc:"业主宝鸡建安集团。获鲁班奖、陕西省优秀设计一等奖。建筑规模 53130㎡。"},
+  {title:"陕西陇县关山悦度假酒店", type:"酒店民宿", location:"陕西 · 陇县", year:"—", scale:"246240㎡", img:"images/project-25.jpg", desc:"业主宝鸡建安集团，建筑规模 246240㎡。以在地山水为底图的度假酒店设计。"},
+  {title:"会泽县博物馆片区商业街区设计（建设中）", type:"文化商业", location:"云南 · 会泽", year:"2024", scale:"18750㎡", img:"images/project-26.jpg", desc:"业主会泽县人民政府，建筑规模 18750㎡，获 2025 年度 AURA 亚洲城市更新银奖。设计周期 2024–2026 年。"},
+  {title:"会泽历史文化名城保护更新 —— 13# 地书咖", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-27.jpg", desc:"会泽历史文化名城保护更新节点，将传统院落激活为面向公众的书咖空间。"},
+  {title:"会泽历史文化名城保护更新 —— 8# 地（典当行）", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-28.jpg", desc:"历史名城保护更新中的典当行地块改造，延续街巷肌理与传统建筑风貌。"},
+  {title:"宝鸡市石鼓山太阳市", type:"文化商业", location:"陕西 · 宝鸡", year:"2013", scale:"38725㎡", img:"images/project-29.jpg", desc:"依托石鼓山文化资源设计的商业街区，建筑规模 38725㎡。"},
+  {title:"函谷关景区提升项目方案设计", type:"文旅规划", location:"河南 · 灵宝", year:"2025", scale:"17343㎡", img:"images/project-30.jpg", desc:"函谷关景区整体提升方案，规划面积 17343㎡，重塑历史景区的游览体验与文化展示。"},
+  {title:"陶寺国家考古遗址公园考古研究用房（游客服务中心）", type:"文化建筑", location:"山西 · 襄汾", year:"2023", scale:"133340㎡", img:"images/project-31.jpg", desc:"位于山西省襄汾县陶寺乡，服务考古研究与公众参观，规划面积 133340㎡。"},
+  {title:"麟游唐井博物馆及楷书广场", type:"文化建筑", location:"陕西 · 麟游", year:"2023", scale:"—", img:"images/project-32.jpg", desc:"以唐代文化为主题的博物馆及楷书广场，营造兼具展示与公共活动的城市空间。"},
+  {title:"西影厂星光大道咖啡馆", type:"室内改造", location:"陕西 · 西安", year:"2023", scale:"310㎡", img:"images/project-33.jpg", desc:"位于西安电影制片厂星光大道，建筑面积 310㎡，以电影文化为主题的咖啡空间改造。"},
+  {title:"陵川县佛山村乡村规划 · pizza 店及威士忌酒吧", type:"乡村振兴", location:"山西 · 陵川", year:"2020", scale:"—", img:"images/project-34.jpg", desc:"业主陵川县人民政府。将乡村闲置空间改造为 pizza 店与威士忌酒吧，探索乡村业态的年轻化可能。"},
+  {title:"聊城谷官屯中共鲁北特委纪念馆", type:"文化建筑", location:"山东 · 聊城", year:"2022", scale:"780㎡", img:"images/project-35.jpg", desc:"红色主题纪念馆，建筑规模 780㎡，以克制的建筑语言表达纪念性。"},
+  {title:"洛南木作工坊", type:"产业建筑", location:"陕西 · 商洛", year:"2023", scale:"—", img:"images/project-36.jpg", desc:"位于商洛市洛南县，以传统木作为主题的工坊建筑，带动在地手工艺产业。"},
+  {title:"留坝县江口镇河西村红军军部旧址红色研学基地", type:"遗产保护", location:"陕西 · 汉中", year:"2022", scale:"31920㎡", img:"images/project-37.jpg", desc:"「调和的纪念性」——公共空间规划设计竞赛项目，规划面积 31920㎡，活化红色旧址为研学空间。"},
+  {title:"耳沁尧乡村生活复兴计划 —— 核心区域空间提升", type:"乡村振兴", location:"内蒙古 · 包头", year:"2023", scale:"32780㎡", img:"images/project-38.jpg", desc:"以乡村生活复兴为目标的核心区空间提升，规划面积 32780㎡。"},
+  {title:"陶寺乡关帝庙广场提升改造", type:"乡村更新", location:"山西 · 襄汾", year:"2023", scale:"6060㎡", img:"images/project-39.jpg", desc:"陶寺村关帝庙广场提升改造，规划面积 6060㎡，重塑乡村公共活动核心。"},
+  {title:"商洛山阳史家坪村河边民宿设计", type:"酒店民宿", location:"陕西 · 商洛", year:"2023", scale:"450㎡", img:"images/project-40.jpg", desc:"位于陕西省商洛市山阳县，建筑面积 450㎡，沿河而建的乡村民宿。"},
+  {title:"安康瀛湖动物岛设计方案", type:"动物的空间", location:"陕西 · 安康", year:"2020", scale:"7500㎡", img:"images/project-41.jpg", desc:"在一个岛上逛动物园——自然坡地与丰茂植被为动物营造接近原始的状态，人类空间被压缩为一条盘旋而上的廊子，让人在行进中与自然对话。建筑规模 7500㎡。"},
+  {title:"连接之谷 —— 黑山 CITES 中心及动物园周边概念设计（一等奖）", type:"动物的空间", location:"黑山共和国 · 内拉内", year:"2022", scale:"5906㎡", img:"images/project-42.jpg", desc:"黑山共和国内拉内 CITES 中心和动物园周边接触区概念建筑设计国际竞赛一等奖，建筑规模 5906㎡。"},
+  {title:"太白县室内滑雪馆", type:"体育建筑", location:"陕西 · 太白", year:"2019", scale:"15278㎡", img:"images/project-43.jpg", desc:"业主宝鸡建安集团，建筑规模 15278㎡，满足山地县的四季冰雪运动需求。"},
+  {title:"城固体育运动中心", type:"体育建筑", location:"陕西 · 城固", year:"2019", scale:"48900㎡", img:"images/project-44.jpg", desc:"业主城固县体育局，建筑规模 48900㎡，服务城市体育赛事与全民健身。"},
 ];
 
 /* 渲染案例卡片 —— 使用真实项目图片 */
