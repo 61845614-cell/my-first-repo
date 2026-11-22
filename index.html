@@ -136,6 +136,20 @@ header.nav.solid{background:rgba(247,246,242,.94);backdrop-filter:blur(10px);box
 
 /* ===== 作品集 ===== */
 .portfolio{background:var(--paper-2)}
+/* 分类筛选栏 */
+.filter-bar{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  margin:-16px 0 40px;padding-bottom:6px;
+}
+.filter-btn{
+  font-family:var(--sans);font-size:13px;letter-spacing:.04em;
+  padding:9px 18px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink-2);cursor:pointer;transition:.25s;white-space:nowrap;
+}
+.filter-btn:hover{border-color:var(--accent);color:var(--ink)}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.filter-btn .num{font-size:11px;opacity:.6;margin-left:6px}
+.filter-btn.active .num{opacity:.8}
 .grid-cases{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .card{background:var(--paper);cursor:pointer;transition:transform .4s,box-shadow .4s}
 .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,.08)}
@@ -253,6 +267,8 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
   .stat b{font-size:27px}
   .hero-inner{padding:100px 0}
   .modal-body{padding:26px 22px 34px}
+  .filter-bar{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin-bottom:30px;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+  .filter-btn{flex:0 0 auto;padding:8px 14px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -322,8 +338,10 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
     <div class="sec-head reveal">
       <div class="eyebrow">Selected Works</div>
       <h2 class="sec-title">作品集 / 案例</h2>
-      <p>精选教育建筑、乡村振兴与文旅实践。点击任意卡片可展开项目大图与说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
+      <p>精选教育建筑、酒店民宿、乡村振兴与文旅实践。可按类别筛选，点击任意卡片可展开项目大图与说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
     </div>
+    <!-- 分类筛选栏：按钮由脚本按 PROJECTS 中的 cat 字段自动生成 -->
+    <div class="filter-bar" id="filterBar"></div>
     <div class="grid-cases" id="cases"></div>
     <div class="more-hint reveal">— 更多项目持续更新中 —</div>
   </div>
@@ -485,68 +503,98 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
    图片：全部为占位。替换真实图片时，把渲染处的 <div class="ph"> 换成 <img src="...">
    ============================================================ */
 const PROJECTS = [
-  {title:"西安建筑科技大学雁塔校区 · 笃实大道周边改造", type:"校园更新", location:"西安 · 雁塔", year:"2024", scale:"约 3000㎡", img:"images/project-01.jpg", desc:"对校园现有空间进行挖掘与再利用，围绕校园路径的重要空间节点展开讨论，探讨当代大学校园集约型生活服务设施的开放度与公共性。改造规模约 3000㎡。"},
-  {title:"兰州理工大学兰工坪校区学生综合服务中心", type:"教育建筑", location:"兰州 · 兰工坪", year:"2023", scale:"110000㎡", img:"images/project-02.jpg", desc:"对校园「剩余」空间的创造性利用，回应校园边界空间节点，探索高品质集约型学生服务设施的开放性与公共性。建筑规模 110000㎡。"},
-  {title:"长安区抱龙村抱龙学堂", type:"教育建筑", location:"西安 · 长安", year:"2023", scale:"3600㎡", img:"images/project-03.jpg", desc:"由原小学及党群服务中心提升改造而成，将闲置校舍激活为面向乡村的公共教育空间。建筑规模 3600㎡。"},
-  {title:"班玛县塞莱唐镇寄宿制小学新建教学楼", type:"教育建筑", location:"青海 · 班玛", year:"2022", scale:"5200㎡", img:"images/project-04.jpg", desc:"地处年保玉则山南麓、马柯河西岸。在较大高差的场地中，以较低造价创造有趣的开放空间，与原有建筑形成良好对话。巨大的回字形体量匍匐于坡地，完善校园轴线。规模 5200㎡。"},
-  {title:"西安外事学院鱼化寨陶艺美术馆（遗址博物馆）", type:"文化建筑", location:"西安 · 鱼化寨", year:"2022", scale:"7500㎡", img:"images/project-05.jpg", desc:"利用既有建筑顺势而为，形成丰富的面向遗址区的公共空间，以及错落有致的博物馆建筑体量。建筑规模 7500㎡。"},
-  {title:"宝鸡文理学院盘龙新区校园总体规划", type:"校园规划", location:"宝鸡 · 盘龙", year:"2019", scale:"1703.5 亩", img:"images/project-06.jpg", desc:"以「革故鼎新」为设计理念，传承宝鸡「青铜器之乡」的地域文化记忆，尊重台塬地貌，依托贯穿全校的人行廊道，打造校区、园区、社区三区融合的开放共享创新校园。用地 1703.5 亩。"},
-  {title:"江西上饶铅山县第三中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"39159㎡", img:"images/project-07.jpg", desc:"融于自然的校园空间，激发孩子们的创造力，以及对人、自然与故乡的爱。建筑规模 39159㎡。"},
-  {title:"江西上饶武夷山中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"3970㎡", img:"images/project-08.jpg", desc:"一个极具开创性的校园空间格局扩张计划，探索第二课堂的多样性空间与校园原有格局的融合，建立学校与城市、地方文化共生的可能性。"},
-  {title:"杨凌上合组织农业技术交流培训中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2019", scale:"63635㎡", img:"images/project-09.jpg", desc:"尝试以小规模建筑形成「大体量」，表达现代农业主题教育建筑的科技感、生态性、开放性及大国气象。建筑规模 63635㎡。"},
-  {title:"西安建筑科技大学田径场改造及附属中学建筑方案", type:"校园更新", location:"西安 · 雁塔", year:"2018", scale:"102680㎡", img:"images/project-10.jpg", desc:"田径场改造及附属中学建筑方案设计，统筹运动场地与教学空间的复合利用。建筑规模 102680㎡。"},
-  {title:"西部设计大厦", type:"公共建筑", location:"西安", year:"2017", scale:"84103㎡", img:"images/project-11.jpg", desc:"将建筑基本元素「构件化」，表达中国传统建筑学科意味；水平向的体量是对大雁塔的致敬。建筑规模 84103㎡。"},
-  {title:"宝鸡文理学院教学楼", type:"教育建筑", location:"宝鸡", year:"2017", scale:"46950㎡", img:"images/project-12.jpg", desc:"探讨土地资源、日照资源与景观资源的最优分配，追寻尺度感、标识性与归属感，思考空间可达性、建筑开放感及校园通过性空间。规模 46950㎡。"},
-  {title:"西北农林科技大学水利与建筑学院", type:"教育建筑", location:"陕西 · 杨凌", year:"2017", scale:"46500㎡", img:"images/project-13.jpg", desc:"通过建筑形体的错动与开合，调节体育场轴线与校园轴线的关系，探索空间可达性、建筑开放感及校园通过性空间。规模 46500㎡。"},
-  {title:"铁一中湖滨校区综合楼", type:"教育建筑", location:"西安", year:"2017", scale:"57000㎡", img:"images/project-14.jpg", desc:"集合中学行政办公、音体楼、图书馆、体育场看台于一体的教育综合体，以拼贴的方式成就别具一格的完整体量，节约用地的同时提升各部分使用效率。规模 57000㎡。"},
-  {title:"西北农林科技大学大学生事务中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2016", scale:"18000㎡", img:"images/project-15.jpg", desc:"通过界面的虚实与开合探讨校园环境的轴线和正面性问题，讨论校园公共建筑群组的尺度，思考空间可达性与建筑开放感。规模 18000㎡。"},
-  {title:"西安思源学院南大门", type:"教育建筑", location:"西安", year:"2016", scale:"3500㎡", img:"images/project-16.jpg", desc:"整合校园南北校区前区错综复杂的空间关系，探索未来校园文化展示与共享空间的可能性。规模 3500㎡。"},
-  {title:"西北农林科技大学 5# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2016", scale:"7500㎡", img:"images/project-17.jpg", desc:"探讨校园中的历史建筑应被怎样对待：通过局部置换「阶梯」式建筑语言，使新体量与历史建筑对话，激活历史空间，使其在校园中重获生机。规模 7500㎡。"},
-  {title:"西安思源学院体育场改造提升项目", type:"校园更新", location:"西安", year:"2015", scale:"57000㎡", img:"images/project-18.jpg", desc:"巨大的体量在满足学校停车位需求后，为校园空间带来新的可能——集停车、屋顶操场、健身房、室内球馆、咖啡厅、自习室于一体的文化体育综合体，并可独立对外为学校增加收益。规模 57000㎡。"},
-  {title:"西安石油大学体育场", type:"体育建筑", location:"西安", year:"2015", scale:"6830㎡", img:"images/project-19.jpg", desc:"西安石油大学体育场馆设计，服务校园体育教学与师生日常活动。规模 6830㎡。"},
-  {title:"西北农林科技大学 2# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2015", scale:"1500㎡", img:"images/project-20.jpg", desc:"通过对旧建筑局部「掏空」「后退」形成新空间与旧建筑的对话，使旧建筑的空间和结构被激活并赋予新的意义。规模 1500㎡。"},
-  {title:"西建大附中、附小教学楼改造设计", type:"校园更新", location:"西安", year:"2014", scale:"15000㎡", img:"images/project-21.jpg", desc:"在有限的空间内创造尽可能多的学生活动空间，屋顶种植园增加孩子们对自然的体验，整合中小学入口空间使进出校园更具仪式感。规模 15000㎡。"},
-  {title:"宝鸡文理学院体育场改造提升项目", type:"体育建筑", location:"宝鸡", year:"2014", scale:"30000㎡", img:"images/project-22.jpg", desc:"体育场改造提升设计，完善校园运动空间与配套设施。规模 30000㎡。"},
-  {title:"兰州 · 黄河楼", type:"文化建筑", location:"甘肃 · 兰州", year:"2018", scale:"68180㎡", img:"images/project-23.jpg", desc:"兰州新的城市地标，再现兰州城市与黄河的历史空间关系。获飞天奖、陕西省省优一等奖。建筑规模 68180㎡。"},
-  {title:"陕西太白县海棠度假酒店", type:"酒店民宿", location:"陕西 · 太白", year:"2018", scale:"53130㎡", img:"images/project-24.jpg", desc:"业主宝鸡建安集团。获鲁班奖、陕西省优秀设计一等奖。建筑规模 53130㎡。"},
-  {title:"陕西陇县关山悦度假酒店", type:"酒店民宿", location:"陕西 · 陇县", year:"—", scale:"246240㎡", img:"images/project-25.jpg", desc:"业主宝鸡建安集团，建筑规模 246240㎡。以在地山水为底图的度假酒店设计。"},
-  {title:"会泽县博物馆片区商业街区设计（建设中）", type:"文化商业", location:"云南 · 会泽", year:"2024", scale:"18750㎡", img:"images/project-26.jpg", desc:"业主会泽县人民政府，建筑规模 18750㎡，获 2025 年度 AURA 亚洲城市更新银奖。设计周期 2024–2026 年。"},
-  {title:"会泽历史文化名城保护更新 —— 13# 地书咖", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-27.jpg", desc:"会泽历史文化名城保护更新节点，将传统院落激活为面向公众的书咖空间。"},
-  {title:"会泽历史文化名城保护更新 —— 8# 地（典当行）", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-28.jpg", desc:"历史名城保护更新中的典当行地块改造，延续街巷肌理与传统建筑风貌。"},
-  {title:"宝鸡市石鼓山太阳市", type:"文化商业", location:"陕西 · 宝鸡", year:"2013", scale:"38725㎡", img:"images/project-29.jpg", desc:"依托石鼓山文化资源设计的商业街区，建筑规模 38725㎡。"},
-  {title:"函谷关景区提升项目方案设计", type:"文旅规划", location:"河南 · 灵宝", year:"2025", scale:"17343㎡", img:"images/project-30.jpg", desc:"函谷关景区整体提升方案，规划面积 17343㎡，重塑历史景区的游览体验与文化展示。"},
-  {title:"陶寺国家考古遗址公园考古研究用房（游客服务中心）", type:"文化建筑", location:"山西 · 襄汾", year:"2023", scale:"133340㎡", img:"images/project-31.jpg", desc:"位于山西省襄汾县陶寺乡，服务考古研究与公众参观，规划面积 133340㎡。"},
-  {title:"麟游唐井博物馆及楷书广场", type:"文化建筑", location:"陕西 · 麟游", year:"2023", scale:"—", img:"images/project-32.jpg", desc:"以唐代文化为主题的博物馆及楷书广场，营造兼具展示与公共活动的城市空间。"},
-  {title:"西影厂星光大道咖啡馆", type:"室内改造", location:"陕西 · 西安", year:"2023", scale:"310㎡", img:"images/project-33.jpg", desc:"位于西安电影制片厂星光大道，建筑面积 310㎡，以电影文化为主题的咖啡空间改造。"},
-  {title:"陵川县佛山村乡村规划 · pizza 店及威士忌酒吧", type:"乡村振兴", location:"山西 · 陵川", year:"2020", scale:"—", img:"images/project-34.jpg", desc:"业主陵川县人民政府。将乡村闲置空间改造为 pizza 店与威士忌酒吧，探索乡村业态的年轻化可能。"},
-  {title:"聊城谷官屯中共鲁北特委纪念馆", type:"文化建筑", location:"山东 · 聊城", year:"2022", scale:"780㎡", img:"images/project-35.jpg", desc:"红色主题纪念馆，建筑规模 780㎡，以克制的建筑语言表达纪念性。"},
-  {title:"洛南木作工坊", type:"产业建筑", location:"陕西 · 商洛", year:"2023", scale:"—", img:"images/project-36.jpg", desc:"位于商洛市洛南县，以传统木作为主题的工坊建筑，带动在地手工艺产业。"},
-  {title:"留坝县江口镇河西村红军军部旧址红色研学基地", type:"遗产保护", location:"陕西 · 汉中", year:"2022", scale:"31920㎡", img:"images/project-37.jpg", desc:"「调和的纪念性」——公共空间规划设计竞赛项目，规划面积 31920㎡，活化红色旧址为研学空间。"},
-  {title:"耳沁尧乡村生活复兴计划 —— 核心区域空间提升", type:"乡村振兴", location:"内蒙古 · 包头", year:"2023", scale:"32780㎡", img:"images/project-38.jpg", desc:"以乡村生活复兴为目标的核心区空间提升，规划面积 32780㎡。"},
-  {title:"陶寺乡关帝庙广场提升改造", type:"乡村更新", location:"山西 · 襄汾", year:"2023", scale:"6060㎡", img:"images/project-39.jpg", desc:"陶寺村关帝庙广场提升改造，规划面积 6060㎡，重塑乡村公共活动核心。"},
-  {title:"商洛山阳史家坪村河边民宿设计", type:"酒店民宿", location:"陕西 · 商洛", year:"2023", scale:"450㎡", img:"images/project-40.jpg", desc:"位于陕西省商洛市山阳县，建筑面积 450㎡，沿河而建的乡村民宿。"},
-  {title:"安康瀛湖动物岛设计方案", type:"动物的空间", location:"陕西 · 安康", year:"2020", scale:"7500㎡", img:"images/project-41.jpg", desc:"在一个岛上逛动物园——自然坡地与丰茂植被为动物营造接近原始的状态，人类空间被压缩为一条盘旋而上的廊子，让人在行进中与自然对话。建筑规模 7500㎡。"},
-  {title:"连接之谷 —— 黑山 CITES 中心及动物园周边概念设计（一等奖）", type:"动物的空间", location:"黑山共和国 · 内拉内", year:"2022", scale:"5906㎡", img:"images/project-42.jpg", desc:"黑山共和国内拉内 CITES 中心和动物园周边接触区概念建筑设计国际竞赛一等奖，建筑规模 5906㎡。"},
-  {title:"太白县室内滑雪馆", type:"体育建筑", location:"陕西 · 太白", year:"2019", scale:"15278㎡", img:"images/project-43.jpg", desc:"业主宝鸡建安集团，建筑规模 15278㎡，满足山地县的四季冰雪运动需求。"},
-  {title:"城固体育运动中心", type:"体育建筑", location:"陕西 · 城固", year:"2019", scale:"48900㎡", img:"images/project-44.jpg", desc:"业主城固县体育局，建筑规模 48900㎡，服务城市体育赛事与全民健身。"},
+  {title:"西安建筑科技大学雁塔校区 · 笃实大道周边改造", type:"校园更新", location:"西安 · 雁塔", year:"2024", scale:"约 3000㎡", img:"images/project-01.jpg", cat:"教育建筑", desc:"对校园现有空间进行挖掘与再利用，围绕校园路径的重要空间节点展开讨论，探讨当代大学校园集约型生活服务设施的开放度与公共性。改造规模约 3000㎡。"},
+  {title:"兰州理工大学兰工坪校区学生综合服务中心", type:"教育建筑", location:"兰州 · 兰工坪", year:"2023", scale:"110000㎡", img:"images/project-02.jpg", cat:"教育建筑", desc:"对校园「剩余」空间的创造性利用，回应校园边界空间节点，探索高品质集约型学生服务设施的开放性与公共性。建筑规模 110000㎡。"},
+  {title:"长安区抱龙村抱龙学堂", type:"教育建筑", location:"西安 · 长安", year:"2023", scale:"3600㎡", img:"images/project-03.jpg", cat:"教育建筑", desc:"由原小学及党群服务中心提升改造而成，将闲置校舍激活为面向乡村的公共教育空间。建筑规模 3600㎡。"},
+  {title:"班玛县塞莱唐镇寄宿制小学新建教学楼", type:"教育建筑", location:"青海 · 班玛", year:"2022", scale:"5200㎡", img:"images/project-04.jpg", cat:"教育建筑", desc:"地处年保玉则山南麓、马柯河西岸。在较大高差的场地中，以较低造价创造有趣的开放空间，与原有建筑形成良好对话。巨大的回字形体量匍匐于坡地，完善校园轴线。规模 5200㎡。"},
+  {title:"西安外事学院鱼化寨陶艺美术馆（遗址博物馆）", type:"文化建筑", location:"西安 · 鱼化寨", year:"2022", scale:"7500㎡", img:"images/project-05.jpg", cat:"教育建筑", desc:"利用既有建筑顺势而为，形成丰富的面向遗址区的公共空间，以及错落有致的博物馆建筑体量。建筑规模 7500㎡。"},
+  {title:"宝鸡文理学院盘龙新区校园总体规划", type:"校园规划", location:"宝鸡 · 盘龙", year:"2019", scale:"1703.5 亩", img:"images/project-06.jpg", cat:"教育建筑", desc:"以「革故鼎新」为设计理念，传承宝鸡「青铜器之乡」的地域文化记忆，尊重台塬地貌，依托贯穿全校的人行廊道，打造校区、园区、社区三区融合的开放共享创新校园。用地 1703.5 亩。"},
+  {title:"江西上饶铅山县第三中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"39159㎡", img:"images/project-07.jpg", cat:"教育建筑", desc:"融于自然的校园空间，激发孩子们的创造力，以及对人、自然与故乡的爱。建筑规模 39159㎡。"},
+  {title:"江西上饶武夷山中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"3970㎡", img:"images/project-08.jpg", cat:"教育建筑", desc:"一个极具开创性的校园空间格局扩张计划，探索第二课堂的多样性空间与校园原有格局的融合，建立学校与城市、地方文化共生的可能性。"},
+  {title:"杨凌上合组织农业技术交流培训中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2019", scale:"63635㎡", img:"images/project-09.jpg", cat:"教育建筑", desc:"尝试以小规模建筑形成「大体量」，表达现代农业主题教育建筑的科技感、生态性、开放性及大国气象。建筑规模 63635㎡。"},
+  {title:"西安建筑科技大学田径场改造及附属中学建筑方案", type:"校园更新", location:"西安 · 雁塔", year:"2018", scale:"102680㎡", img:"images/project-10.jpg", cat:"教育建筑", desc:"田径场改造及附属中学建筑方案设计，统筹运动场地与教学空间的复合利用。建筑规模 102680㎡。"},
+  {title:"西部设计大厦", type:"公共建筑", location:"西安", year:"2017", scale:"84103㎡", img:"images/project-11.jpg", cat:"教育建筑", desc:"将建筑基本元素「构件化」，表达中国传统建筑学科意味；水平向的体量是对大雁塔的致敬。建筑规模 84103㎡。"},
+  {title:"宝鸡文理学院教学楼", type:"教育建筑", location:"宝鸡", year:"2017", scale:"46950㎡", img:"images/project-12.jpg", cat:"教育建筑", desc:"探讨土地资源、日照资源与景观资源的最优分配，追寻尺度感、标识性与归属感，思考空间可达性、建筑开放感及校园通过性空间。规模 46950㎡。"},
+  {title:"西北农林科技大学水利与建筑学院", type:"教育建筑", location:"陕西 · 杨凌", year:"2017", scale:"46500㎡", img:"images/project-13.jpg", cat:"教育建筑", desc:"通过建筑形体的错动与开合，调节体育场轴线与校园轴线的关系，探索空间可达性、建筑开放感及校园通过性空间。规模 46500㎡。"},
+  {title:"铁一中湖滨校区综合楼", type:"教育建筑", location:"西安", year:"2017", scale:"57000㎡", img:"images/project-14.jpg", cat:"教育建筑", desc:"集合中学行政办公、音体楼、图书馆、体育场看台于一体的教育综合体，以拼贴的方式成就别具一格的完整体量，节约用地的同时提升各部分使用效率。规模 57000㎡。"},
+  {title:"西北农林科技大学大学生事务中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2016", scale:"18000㎡", img:"images/project-15.jpg", cat:"教育建筑", desc:"通过界面的虚实与开合探讨校园环境的轴线和正面性问题，讨论校园公共建筑群组的尺度，思考空间可达性与建筑开放感。规模 18000㎡。"},
+  {title:"西安思源学院南大门", type:"教育建筑", location:"西安", year:"2016", scale:"3500㎡", img:"images/project-16.jpg", cat:"教育建筑", desc:"整合校园南北校区前区错综复杂的空间关系，探索未来校园文化展示与共享空间的可能性。规模 3500㎡。"},
+  {title:"西北农林科技大学 5# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2016", scale:"7500㎡", img:"images/project-17.jpg", cat:"教育建筑", desc:"探讨校园中的历史建筑应被怎样对待：通过局部置换「阶梯」式建筑语言，使新体量与历史建筑对话，激活历史空间，使其在校园中重获生机。规模 7500㎡。"},
+  {title:"西安思源学院体育场改造提升项目", type:"校园更新", location:"西安", year:"2015", scale:"57000㎡", img:"images/project-18.jpg", cat:"教育建筑", desc:"巨大的体量在满足学校停车位需求后，为校园空间带来新的可能——集停车、屋顶操场、健身房、室内球馆、咖啡厅、自习室于一体的文化体育综合体，并可独立对外为学校增加收益。规模 57000㎡。"},
+  {title:"西安石油大学体育场", type:"体育建筑", location:"西安", year:"2015", scale:"6830㎡", img:"images/project-19.jpg", cat:"教育建筑", desc:"西安石油大学体育场馆设计，服务校园体育教学与师生日常活动。规模 6830㎡。"},
+  {title:"西北农林科技大学 2# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2015", scale:"1500㎡", img:"images/project-20.jpg", cat:"教育建筑", desc:"通过对旧建筑局部「掏空」「后退」形成新空间与旧建筑的对话，使旧建筑的空间和结构被激活并赋予新的意义。规模 1500㎡。"},
+  {title:"西建大附中、附小教学楼改造设计", type:"校园更新", location:"西安", year:"2014", scale:"15000㎡", img:"images/project-21.jpg", cat:"教育建筑", desc:"在有限的空间内创造尽可能多的学生活动空间，屋顶种植园增加孩子们对自然的体验，整合中小学入口空间使进出校园更具仪式感。规模 15000㎡。"},
+  {title:"宝鸡文理学院体育场改造提升项目", type:"体育建筑", location:"宝鸡", year:"2014", scale:"30000㎡", img:"images/project-22.jpg", cat:"教育建筑", desc:"体育场改造提升设计，完善校园运动空间与配套设施。规模 30000㎡。"},
+  {title:"兰州 · 黄河楼", type:"文化建筑", location:"甘肃 · 兰州", year:"2018", scale:"68180㎡", img:"images/project-23.jpg", cat:"文旅文化", desc:"兰州新的城市地标，再现兰州城市与黄河的历史空间关系。获飞天奖、陕西省省优一等奖。建筑规模 68180㎡。"},
+  {title:"陕西太白县海棠度假酒店", type:"酒店民宿", location:"陕西 · 太白", year:"2018", scale:"53130㎡", img:"images/project-24.jpg", cat:"酒店民宿", desc:"业主宝鸡建安集团。获鲁班奖、陕西省优秀设计一等奖。建筑规模 53130㎡。"},
+  {title:"陕西陇县关山悦度假酒店", type:"酒店民宿", location:"陕西 · 陇县", year:"—", scale:"246240㎡", img:"images/project-25.jpg", cat:"酒店民宿", desc:"业主宝鸡建安集团，建筑规模 246240㎡。以在地山水为底图的度假酒店设计。"},
+  {title:"会泽县博物馆片区商业街区设计（建设中）", type:"文化商业", location:"云南 · 会泽", year:"2024", scale:"18750㎡", img:"images/project-26.jpg", cat:"文旅文化", desc:"业主会泽县人民政府，建筑规模 18750㎡，获 2025 年度 AURA 亚洲城市更新银奖。设计周期 2024–2026 年。"},
+  {title:"会泽历史文化名城保护更新 —— 13# 地书咖", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-27.jpg", cat:"文旅文化", desc:"会泽历史文化名城保护更新节点，将传统院落激活为面向公众的书咖空间。"},
+  {title:"会泽历史文化名城保护更新 —— 8# 地（典当行）", type:"城市更新", location:"云南 · 会泽", year:"2024", scale:"—", img:"images/project-28.jpg", cat:"文旅文化", desc:"历史名城保护更新中的典当行地块改造，延续街巷肌理与传统建筑风貌。"},
+  {title:"宝鸡市石鼓山太阳市", type:"文化商业", location:"陕西 · 宝鸡", year:"2013", scale:"38725㎡", img:"images/project-29.jpg", cat:"文旅文化", desc:"依托石鼓山文化资源设计的商业街区，建筑规模 38725㎡。"},
+  {title:"函谷关景区提升项目方案设计", type:"文旅规划", location:"河南 · 灵宝", year:"2025", scale:"17343㎡", img:"images/project-30.jpg", cat:"文旅文化", desc:"函谷关景区整体提升方案，规划面积 17343㎡，重塑历史景区的游览体验与文化展示。"},
+  {title:"陶寺国家考古遗址公园考古研究用房（游客服务中心）", type:"文化建筑", location:"山西 · 襄汾", year:"2023", scale:"133340㎡", img:"images/project-31.jpg", cat:"文旅文化", desc:"位于山西省襄汾县陶寺乡，服务考古研究与公众参观，规划面积 133340㎡。"},
+  {title:"麟游唐井博物馆及楷书广场", type:"文化建筑", location:"陕西 · 麟游", year:"2023", scale:"—", img:"images/project-32.jpg", cat:"文旅文化", desc:"以唐代文化为主题的博物馆及楷书广场，营造兼具展示与公共活动的城市空间。"},
+  {title:"西影厂星光大道咖啡馆", type:"室内改造", location:"陕西 · 西安", year:"2023", scale:"310㎡", img:"images/project-33.jpg", cat:"文旅文化", desc:"位于西安电影制片厂星光大道，建筑面积 310㎡，以电影文化为主题的咖啡空间改造。"},
+  {title:"陵川县佛山村乡村规划 · pizza 店及威士忌酒吧", type:"乡村振兴", location:"山西 · 陵川", year:"2020", scale:"—", img:"images/project-34.jpg", cat:"乡村振兴", desc:"业主陵川县人民政府。将乡村闲置空间改造为 pizza 店与威士忌酒吧，探索乡村业态的年轻化可能。"},
+  {title:"聊城谷官屯中共鲁北特委纪念馆", type:"文化建筑", location:"山东 · 聊城", year:"2022", scale:"780㎡", img:"images/project-35.jpg", cat:"文旅文化", desc:"红色主题纪念馆，建筑规模 780㎡，以克制的建筑语言表达纪念性。"},
+  {title:"洛南木作工坊", type:"产业建筑", location:"陕西 · 商洛", year:"2023", scale:"—", img:"images/project-36.jpg", cat:"乡村振兴", desc:"位于商洛市洛南县，以传统木作为主题的工坊建筑，带动在地手工艺产业。"},
+  {title:"留坝县江口镇河西村红军军部旧址红色研学基地", type:"遗产保护", location:"陕西 · 汉中", year:"2022", scale:"31920㎡", img:"images/project-37.jpg", cat:"乡村振兴", desc:"「调和的纪念性」——公共空间规划设计竞赛项目，规划面积 31920㎡，活化红色旧址为研学空间。"},
+  {title:"耳沁尧乡村生活复兴计划 —— 核心区域空间提升", type:"乡村振兴", location:"内蒙古 · 包头", year:"2023", scale:"32780㎡", img:"images/project-38.jpg", cat:"乡村振兴", desc:"以乡村生活复兴为目标的核心区空间提升，规划面积 32780㎡。"},
+  {title:"陶寺乡关帝庙广场提升改造", type:"乡村更新", location:"山西 · 襄汾", year:"2023", scale:"6060㎡", img:"images/project-39.jpg", cat:"乡村振兴", desc:"陶寺村关帝庙广场提升改造，规划面积 6060㎡，重塑乡村公共活动核心。"},
+  {title:"商洛山阳史家坪村河边民宿设计", type:"酒店民宿", location:"陕西 · 商洛", year:"2023", scale:"450㎡", img:"images/project-40.jpg", cat:"酒店民宿", desc:"位于陕西省商洛市山阳县，建筑面积 450㎡，沿河而建的乡村民宿。"},
+  {title:"安康瀛湖动物岛设计方案", type:"动物的空间", location:"陕西 · 安康", year:"2020", scale:"7500㎡", img:"images/project-41.jpg", cat:"体育休闲", desc:"在一个岛上逛动物园——自然坡地与丰茂植被为动物营造接近原始的状态，人类空间被压缩为一条盘旋而上的廊子，让人在行进中与自然对话。建筑规模 7500㎡。"},
+  {title:"连接之谷 —— 黑山 CITES 中心及动物园周边概念设计（一等奖）", type:"动物的空间", location:"黑山共和国 · 内拉内", year:"2022", scale:"5906㎡", img:"images/project-42.jpg", cat:"体育休闲", desc:"黑山共和国内拉内 CITES 中心和动物园周边接触区概念建筑设计国际竞赛一等奖，建筑规模 5906㎡。"},
+  {title:"太白县室内滑雪馆", type:"体育建筑", location:"陕西 · 太白", year:"2019", scale:"15278㎡", img:"images/project-43.jpg", cat:"体育休闲", desc:"业主宝鸡建安集团，建筑规模 15278㎡，满足山地县的四季冰雪运动需求。"},
+  {title:"城固体育运动中心", type:"体育建筑", location:"陕西 · 城固", year:"2019", scale:"48900㎡", img:"images/project-44.jpg", cat:"体育休闲", desc:"业主城固县体育局，建筑规模 48900㎡，服务城市体育赛事与全民健身。"},
 ];
 
-/* 渲染案例卡片 —— 使用真实项目图片 */
+/* ===== 分类筛选 ===== */
+/* 分类显示顺序：把酒店民宿 / 乡村振兴放在前面 */
+const CAT_ORDER = ['全部','酒店民宿','乡村振兴','教育建筑','文旅文化','体育休闲'];
 const casesEl = document.getElementById('cases');
-PROJECTS.forEach((p,i)=>{
-  const card = document.createElement('article');
-  card.className = 'card reveal';
-  card.setAttribute('data-index', i);
-  card.innerHTML = `
-    <div class="card-img"><img src="${p.img}" alt="${p.title}" loading="lazy"></div>
-    <div class="card-body">
-      <div class="card-meta">${p.type}</div>
-      <h3>${p.title}</h3>
-      <div class="info"><span>${p.location}</span><span>${p.year}</span></div>
-    </div>`;
-  card.addEventListener('click',()=>openModal(i));
-  casesEl.appendChild(card);
+const filterBar = document.getElementById('filterBar');
+let activeCat = '全部';
+
+/* 统计每个分类的项目数 */
+const catCount = {};
+PROJECTS.forEach(p=>{catCount[p.cat]=(catCount[p.cat]||0)+1});
+
+/* 生成筛选按钮 */
+CAT_ORDER.forEach(cat=>{
+  const total = cat==='全部' ? PROJECTS.length : (catCount[cat]||0);
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn'+(cat===activeCat?' active':'');
+  btn.setAttribute('data-cat', cat);
+  btn.innerHTML = `${cat}<span class="num">${total}</span>`;
+  btn.addEventListener('click',()=>{
+    activeCat = cat;
+    filterBar.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b===btn));
+    renderCases();
+  });
+  filterBar.appendChild(btn);
 });
+
+/* 按当前分类渲染卡片；每张卡片保存其在 PROJECTS 中的原始索引，供弹窗使用 */
+function renderCases(){
+  casesEl.innerHTML = '';
+  PROJECTS.forEach((p,i)=>{
+    if(activeCat!=='全部' && p.cat!==activeCat) return;
+    const card = document.createElement('article');
+    card.className = 'card reveal in';
+    card.setAttribute('data-index', i);
+    card.innerHTML = `
+      <div class="card-img"><img src="${p.img}" alt="${p.title}" loading="lazy"></div>
+      <div class="card-body">
+        <div class="card-meta">${p.type}</div>
+        <h3>${p.title}</h3>
+        <div class="info"><span>${p.location}</span><span>${p.year}</span></div>
+      </div>`;
+    card.addEventListener('click',()=>openModal(i));
+    casesEl.appendChild(card);
+  });
+}
+renderCases();
 
 /* 弹窗逻辑 */
 const modal=document.getElementById('modal');
