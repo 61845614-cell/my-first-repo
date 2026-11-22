@@ -62,6 +62,11 @@ img{max-width:100%;display:block}
   text-align:center;padding:12px;color:rgba(27,26,24,.42);
   font-size:11px;letter-spacing:.18em;line-height:1.6;
 }
+/* 真实作品图片：铺满容器、统一裁切比例 */
+.card-img img,.modal-img img{width:100%;height:100%;object-fit:cover;display:block}
+.card-img{background:#e8e5df}
+.card-img img{transition:transform .6s ease}
+.card:hover .card-img img{transform:scale(1.04)}
 
 /* ===== 顶部导航 ===== */
 header.nav{
@@ -315,7 +320,7 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
     <div class="sec-head reveal">
       <div class="eyebrow">Selected Works</div>
       <h2 class="sec-title">作品集 / 案例</h2>
-      <p>以下为占位案例。点击任意卡片可展开大图与项目说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
+      <p>精选教育建筑与校园更新实践。点击任意卡片可展开项目大图与说明。后期增删案例只需修改页面底部脚本中的 PROJECTS 数组。</p>
     </div>
     <div class="grid-cases" id="cases"></div>
     <div class="more-hint reveal">— 更多项目持续更新中 —</div>
@@ -458,7 +463,7 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
 <div class="modal" id="modal">
   <div class="modal-box">
     <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
-    <div class="ph modal-img" id="modalImg" data-ph="项目大图占位"></div>
+    <div class="modal-img" id="modalImg"></div>
     <div class="modal-body">
       <h3 id="modalTitle"></h3>
       <div class="info" id="modalInfo"></div>
@@ -474,24 +479,38 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
    图片：全部为占位。替换真实图片时，把渲染处的 <div class="ph"> 换成 <img src="...">
    ============================================================ */
 const PROJECTS = [
-  {title:"曲江 · 独栋住宅",      type:"住宅",     location:"西安 · 曲江",   year:"2024", desc:"以院落为中心组织家庭生活，通过连廊串联起居与卧室，让四季的光影进入日常。材料选用清水混凝土与本地石材，克制而温暖。"},
-  {title:"终南山 · 山地别墅",    type:"别墅",     location:"西安 · 长安",   year:"2023", desc:"顺应山势错落布置体量，最大化借景远山。大面积落地玻璃将景观引入室内，室内外边界被有意模糊。"},
-  {title:"老城 · 街巷更新",      type:"公共建筑", location:"西安 · 碑林",   year:"2023", desc:"在保留街巷肌理的前提下植入公共功能，用轻质钢结构与砖混旧墙对话，激活老城片的日常活力。"},
-  {title:"大明宫 · 社区中心",    type:"公共建筑", location:"西安 · 未央",   year:"2022", desc:"面向社区的复合文化空间，屋顶花园与半室外灰空间为居民提供开放的交往场所。"},
-  {title:"曲江 · 公寓室内改造",  type:"室内改造", location:"西安 · 曲江",   year:"2022", desc:"重构三居室的动线与收纳系统，以木色与暖白为主调，在有限面积中营造出通透而有秩序的生活场景。"},
-  {title:"沣河 · 庭院景观",      type:"景观庭院", location:"西安 · 西咸",   year:"2021", desc:"围绕一方水院展开的景观设计，通过植被层次与步道转折，营造移步换景的东方园林意趣。"},
-  {title:"高新 · 办公空间",      type:"室内改造", location:"西安 · 高新",   year:"2021", desc:"为创意团队打造的办公空间，开放工位与安静会议室分区明确，工业风顶面与绿植形成张力。"},
-  {title:"蓝田 · 乡村自建房",    type:"住宅",     location:"西安 · 蓝田",   year:"2020", desc:"以当地材料与工艺回应当地气候，坡屋顶与深檐适应关中地区的日照与降水，朴素而耐用。"}
+  {title:"西安建筑科技大学雁塔校区 · 笃实大道周边改造", type:"校园更新", location:"西安 · 雁塔", year:"2024", scale:"约 3000㎡", img:"images/project-01.jpg", desc:"对校园现有空间进行挖掘与再利用，围绕校园路径的重要空间节点展开讨论，探讨当代大学校园集约型生活服务设施的开放度与公共性。改造规模约 3000㎡。"},
+  {title:"兰州理工大学兰工坪校区学生综合服务中心", type:"教育建筑", location:"兰州 · 兰工坪", year:"2023", scale:"110000㎡", img:"images/project-02.jpg", desc:"对校园「剩余」空间的创造性利用，回应校园边界空间节点，探索高品质集约型学生服务设施的开放性与公共性。建筑规模 110000㎡。"},
+  {title:"长安区抱龙村抱龙学堂", type:"教育建筑", location:"西安 · 长安", year:"2023", scale:"3600㎡", img:"images/project-03.jpg", desc:"由原小学及党群服务中心提升改造而成，将闲置校舍激活为面向乡村的公共教育空间。建筑规模 3600㎡。"},
+  {title:"班玛县塞莱唐镇寄宿制小学新建教学楼", type:"教育建筑", location:"青海 · 班玛", year:"2022", scale:"5200㎡", img:"images/project-04.jpg", desc:"地处年保玉则山南麓、马柯河西岸。在较大高差的场地中，以较低造价创造有趣的开放空间，与原有建筑形成良好对话。巨大的回字形体量匍匐于坡地，完善校园轴线。规模 5200㎡。"},
+  {title:"西安外事学院鱼化寨陶艺美术馆（遗址博物馆）", type:"文化建筑", location:"西安 · 鱼化寨", year:"2022", scale:"7500㎡", img:"images/project-05.jpg", desc:"利用既有建筑顺势而为，形成丰富的面向遗址区的公共空间，以及错落有致的博物馆建筑体量。建筑规模 7500㎡。"},
+  {title:"宝鸡文理学院盘龙新区校园总体规划", type:"校园规划", location:"宝鸡 · 盘龙", year:"2019", scale:"1703.5 亩", img:"images/project-06.jpg", desc:"以「革故鼎新」为设计理念，传承宝鸡「青铜器之乡」的地域文化记忆，尊重台塬地貌，依托贯穿全校的人行廊道，打造校区、园区、社区三区融合的开放共享创新校园。用地 1703.5 亩。"},
+  {title:"江西上饶铅山县第三中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"39159㎡", img:"images/project-07.jpg", desc:"融于自然的校园空间，激发孩子们的创造力，以及对人、自然与故乡的爱。建筑规模 39159㎡。"},
+  {title:"江西上饶武夷山中学", type:"教育建筑", location:"江西 · 上饶", year:"2019", scale:"3970㎡", img:"images/project-08.jpg", desc:"一个极具开创性的校园空间格局扩张计划，探索第二课堂的多样性空间与校园原有格局的融合，建立学校与城市、地方文化共生的可能性。"},
+  {title:"杨凌上合组织农业技术交流培训中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2019", scale:"63635㎡", img:"images/project-09.jpg", desc:"尝试以小规模建筑形成「大体量」，表达现代农业主题教育建筑的科技感、生态性、开放性及大国气象。建筑规模 63635㎡。"},
+  {title:"西安建筑科技大学田径场改造及附属中学建筑方案", type:"校园更新", location:"西安 · 雁塔", year:"2018", scale:"102680㎡", img:"images/project-10.jpg", desc:"田径场改造及附属中学建筑方案设计，统筹运动场地与教学空间的复合利用。建筑规模 102680㎡。"},
+  {title:"西部设计大厦", type:"公共建筑", location:"西安", year:"2017", scale:"84103㎡", img:"images/project-11.jpg", desc:"将建筑基本元素「构件化」，表达中国传统建筑学科意味；水平向的体量是对大雁塔的致敬。建筑规模 84103㎡。"},
+  {title:"宝鸡文理学院教学楼", type:"教育建筑", location:"宝鸡", year:"2017", scale:"46950㎡", img:"images/project-12.jpg", desc:"探讨土地资源、日照资源与景观资源的最优分配，追寻尺度感、标识性与归属感，思考空间可达性、建筑开放感及校园通过性空间。规模 46950㎡。"},
+  {title:"西北农林科技大学水利与建筑学院", type:"教育建筑", location:"陕西 · 杨凌", year:"2017", scale:"46500㎡", img:"images/project-13.jpg", desc:"通过建筑形体的错动与开合，调节体育场轴线与校园轴线的关系，探索空间可达性、建筑开放感及校园通过性空间。规模 46500㎡。"},
+  {title:"铁一中湖滨校区综合楼", type:"教育建筑", location:"西安", year:"2017", scale:"57000㎡", img:"images/project-14.jpg", desc:"集合中学行政办公、音体楼、图书馆、体育场看台于一体的教育综合体，以拼贴的方式成就别具一格的完整体量，节约用地的同时提升各部分使用效率。规模 57000㎡。"},
+  {title:"西北农林科技大学大学生事务中心", type:"教育建筑", location:"陕西 · 杨凌", year:"2016", scale:"18000㎡", img:"images/project-15.jpg", desc:"通过界面的虚实与开合探讨校园环境的轴线和正面性问题，讨论校园公共建筑群组的尺度，思考空间可达性与建筑开放感。规模 18000㎡。"},
+  {title:"西安思源学院南大门", type:"教育建筑", location:"西安", year:"2016", scale:"3500㎡", img:"images/project-16.jpg", desc:"整合校园南北校区前区错综复杂的空间关系，探索未来校园文化展示与共享空间的可能性。规模 3500㎡。"},
+  {title:"西北农林科技大学 5# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2016", scale:"7500㎡", img:"images/project-17.jpg", desc:"探讨校园中的历史建筑应被怎样对待：通过局部置换「阶梯」式建筑语言，使新体量与历史建筑对话，激活历史空间，使其在校园中重获生机。规模 7500㎡。"},
+  {title:"西安思源学院体育场改造提升项目", type:"校园更新", location:"西安", year:"2015", scale:"57000㎡", img:"images/project-18.jpg", desc:"巨大的体量在满足学校停车位需求后，为校园空间带来新的可能——集停车、屋顶操场、健身房、室内球馆、咖啡厅、自习室于一体的文化体育综合体，并可独立对外为学校增加收益。规模 57000㎡。"},
+  {title:"西安石油大学体育场", type:"体育建筑", location:"西安", year:"2015", scale:"6830㎡", img:"images/project-19.jpg", desc:"西安石油大学体育场馆设计，服务校园体育教学与师生日常活动。规模 6830㎡。"},
+  {title:"西北农林科技大学 2# 楼改造", type:"校园更新", location:"陕西 · 杨凌", year:"2015", scale:"1500㎡", img:"images/project-20.jpg", desc:"通过对旧建筑局部「掏空」「后退」形成新空间与旧建筑的对话，使旧建筑的空间和结构被激活并赋予新的意义。规模 1500㎡。"},
+  {title:"西建大附中、附小教学楼改造设计", type:"校园更新", location:"西安", year:"2014", scale:"15000㎡", img:"images/project-21.jpg", desc:"在有限的空间内创造尽可能多的学生活动空间，屋顶种植园增加孩子们对自然的体验，整合中小学入口空间使进出校园更具仪式感。规模 15000㎡。"},
+  {title:"宝鸡文理学院体育场改造提升项目", type:"体育建筑", location:"宝鸡", year:"2014", scale:"30000㎡", img:"images/project-22.jpg", desc:"体育场改造提升设计，完善校园运动空间与配套设施。规模 30000㎡。"},
 ];
 
-/* 渲染案例卡片 —— 图片占位处参见 .ph 类 */
+/* 渲染案例卡片 —— 使用真实项目图片 */
 const casesEl = document.getElementById('cases');
 PROJECTS.forEach((p,i)=>{
   const card = document.createElement('article');
   card.className = 'card reveal';
   card.setAttribute('data-index', i);
   card.innerHTML = `
-    <div class="ph card-img" data-ph="项目图片占位 · ${p.title}"></div>
+    <div class="card-img"><img src="${p.img}" alt="${p.title}" loading="lazy"></div>
     <div class="card-body">
       <div class="card-meta">${p.type}</div>
       <h3>${p.title}</h3>
@@ -505,10 +524,10 @@ PROJECTS.forEach((p,i)=>{
 const modal=document.getElementById('modal');
 function openModal(i){
   const p=PROJECTS[i];
-  const img=document.getElementById('modalImg');
-  img.setAttribute('data-ph','项目大图占位 · '+p.title);
+  const imgBox=document.getElementById('modalImg');
+  imgBox.innerHTML = `<img src="${p.img}" alt="${p.title}">`;
   document.getElementById('modalTitle').textContent=p.title;
-  document.getElementById('modalInfo').textContent=`${p.type} · ${p.location} · ${p.year}`;
+  document.getElementById('modalInfo').textContent=`${p.type} · ${p.location} · ${p.year} · ${p.scale}`;
   document.getElementById('modalDesc').innerHTML=`<p>${p.desc}</p>`;
   modal.classList.add('show');
 }
