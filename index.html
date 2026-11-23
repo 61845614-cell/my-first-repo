@@ -225,6 +225,7 @@ header.nav.solid{background:rgba(247,246,242,.94);backdrop-filter:blur(10px);box
   opacity:0;pointer-events:none;transition:.4s;
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.success{background:#2f6b4f}
 
 /* ===== 页脚 ===== */
 footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
@@ -442,23 +443,27 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
       </div>
       <a class="map-link" href="https://apis.map.qq.com/uri/v1/marker?marker=coord:34.23621,108.96433;title:建大意诚科创中心A座;addr:陕西省西安市碑林区雁塔中路111号&referer=qing-architect-site" target="_blank" rel="noopener">在腾讯地图中打开 ↗</a>
     </div>
-    <!-- 表单为纯前端演示：提交后仅弹出提示，不会真的发送数据 -->
-    <form class="reveal" id="consultForm">
+    <!-- 真实表单：通过 formsubmit.co 免费转发到邮箱 61845614@qq.com（无需注册账号，首次需去邮箱激活一次） -->
+    <form class="reveal" id="consultForm" action="https://formsubmit.co/61845614@qq.com" method="POST">
+      <input type="hidden" name="_subject" value="【网站咨询】清先生建筑设计工作室">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_next" id="formNext" value="">
       <div class="eyebrow" style="margin-bottom:20px">Inquiry</div>
       <div class="form-row">
-        <div class="field"><label>姓名</label><input type="text" name="name" placeholder="您的称呼" required></div>
+        <div class="field"><label>姓名</label><input type="text" name="姓名" placeholder="您的称呼" required></div>
         <div class="field"><label>需求类型</label>
-          <select name="type">
+          <select name="需求类型">
             <option>建筑方案设计</option><option>住宅与别墅设计</option>
             <option>室内设计与改造</option><option>景观与庭院</option>
             <option>方案咨询</option><option>其他</option>
           </select>
         </div>
       </div>
-      <div class="field"><label>联系方式</label><input type="text" name="contact" placeholder="邮箱 / 电话 / 微信" required></div>
-      <div class="field"><label>留言</label><textarea name="msg" placeholder="简单描述您的项目与想法…"></textarea></div>
-      <button type="submit" class="btn btn-primary">提交咨询 →</button>
-      <div class="form-note">* 当前为前端演示，提交仅作样式展示，不会发送真实数据。接入后端或表单服务后即可实际接收咨询。</div>
+      <div class="field"><label>联系方式</label><input type="text" name="联系方式" placeholder="邮箱 / 电话 / 微信" required></div>
+      <div class="field"><label>留言</label><textarea name="留言" placeholder="简单描述您的项目与想法…" required></textarea></div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">提交咨询 →</button>
+      <div class="form-note">* 提交后您的咨询会直接发送到设计师邮箱，通常会在 1–2 个工作日内回复。信息仅用于与您联系。</div>
     </form>
   </div>
 </section>
@@ -481,7 +486,7 @@ footer{background:var(--ink);color:#9c978e;padding:60px 0 40px}
   </div>
 </footer>
 
-<div class="toast" id="toast">已收到您的咨询（演示），请替换表单服务后启用真实提交。</div>
+<div class="toast" id="toast">✓ 咨询已发送成功，我会尽快回复您！</div>
 
 <!-- 案例弹窗 -->
 <div class="modal" id="modal">
@@ -626,13 +631,26 @@ const io=new IntersectionObserver(entries=>{
 },{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* 表单演示提交 */
+/* 表单真实提交（formsubmit.co 转发到邮箱） */
 const form=document.getElementById('consultForm'),toast=document.getElementById('toast');
-form.addEventListener('submit',e=>{
-  e.preventDefault();
+const submitBtn=document.getElementById('submitBtn'),formNext=document.getElementById('formNext');
+
+/* 提交后回到本页的联系方式区块，并带上成功标记 */
+formNext.value = location.origin + location.pathname + '?sent=1#contact';
+
+/* 从表单服务跳回后，显示成功提示 */
+if(new URLSearchParams(location.search).get('sent')==='1'){
+  toast.textContent='✓ 咨询已发送成功，我会尽快回复您！';
+  toast.classList.add('success');
   toast.classList.add('show');
-  form.reset();
-  setTimeout(()=>toast.classList.remove('show'),3600);
+  setTimeout(()=>toast.classList.remove('show'),6000);
+}
+
+/* 提交过程中禁用按钮，防止重复提交 */
+form.addEventListener('submit',()=>{
+  submitBtn.disabled=true;
+  submitBtn.textContent='提交中，请稍候…';
+  submitBtn.style.opacity='.6';
 });
 
 document.getElementById('year').textContent=new Date().getFullYear();
